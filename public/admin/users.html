@@ -47,42 +47,44 @@
                             <label>头像</label>
                             <div class="form-group">
                                 <label class="form-image">
-                  <input id="avatar" type="file">
-                  <img src="../assets/img/default.png">
-                  <i class="mask fa fa-upload"></i>
-                </label>
+                                    <input id="avatar" type="file">
+                                    <img src="../assets/img/default.png" id="prev">
+                                    <i class="mask fa fa-upload"></i>
+                                </label>
+                                <!-- 隐藏域 -->
+                                <input type="hidden" id="img" name="avatar">
                             </div>
                         </div>
                         <div class="form-group">
                             <label>邮箱</label>
-                            <input class="form-control" type="email" placeholder="请输入邮箱">
+                            <input class="form-control" type="email" placeholder="请输入邮箱" name="email" id="email">
                         </div>
                         <div class="form-group">
                             <label>昵称</label>
-                            <input class="form-control" type="text" placeholder="请输入昵称">
+                            <input class="form-control" type="text" placeholder="请输入昵称" name="nickName" id="nickName">
                         </div>
                         <div class="form-group">
                             <label>密码</label>
-                            <input class="form-control" type="text" placeholder="请输入密码">
+                            <input class="form-control" type="text" placeholder="请输入密码" name="password" id="password">
                         </div>
                         <div class="form-group">
                             <div class="radio-inline">
-                                <label><input type="radio">未激活</label>
+                                <label><input type="radio" name="status" value="0" checked>未激活</label>
                             </div>
                             <div class="radio-inline">
-                                <label><input type="radio">激活</label>
+                                <label><input type="radio" name="status" value="0" >激活</label>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="radio-inline">
-                                <label><input type="radio">超级管理员</label>
+                                <label><input type="radio" name="role" value="admin">超级管理员</label>
                             </div>
                             <div class="radio-inline">
-                                <label><input type="radio">普通用户</label>
+                                <label><input type="radio" name="role" value="normal" checked>普通用户</label>
                             </div>
                         </div>
                         <div class="form-group">
-                            <button class="btn btn-primary" type="submit">添加</button>
+                            <button class="btn btn-primary" type="button" id="addUser">添加</button>
                         </div>
                     </form>
                 </div>
@@ -185,8 +187,8 @@
             <td>{{$value.email}}</td>
             <td>{{$value.nickName}}</td>
             <td>{{$value.status == 1 ? '激活' :'未激活'}}</td>
-            <td>{{$value.role==admin ? '超级管理员' :'普通用户'}}</td>
-            <td class="text-center">
+            <td>{{$value.role == 'admin'? '超级管理员' : '普通用户'}}</td>
+            <td class="text-center" data-id="{{$value._id}}">
                 <a href="javascript:;" class="btn btn-default btn-xs">编辑</a>
                 <a href="javascript:;" class="btn btn-danger btn-xs">删除</a>
             </td>
@@ -212,7 +214,55 @@
                 list: arr
             });
             $('tbody').html(html);
-        }
+        };
+
+        // 添加用户信息
+        $('#addUser').on('click', function() {
+            // 获取表单输入的值  serialize（）
+            // console.log($('form').serialize()); // 输出字符串
+            let formData = $('form').serialize();
+            $.ajax({
+                type: 'post',
+                url: '/users',
+                data: formData,
+                success: function(res) {
+                    // console.log(res);
+                    // 将新增的数据添加到 uesrArr 中
+                    userArr.push(res);
+                    // console.log(userArr);
+                    render(userArr);
+                    $('#email').val('');
+                    $('#nickName').val('');
+                    $('#password').val('');
+
+
+                }
+            });
+        });
+
+        // 图片上传功能
+        $('#avatar').on('change', function() {
+            // FormData对象  调用它的append()方法来添加字段
+            var formData = new FormData();
+            // 添加图片文件
+            formData.append('avatar', this.files[0]);
+            // console.log(this.files[0]);
+            // 发送数据
+            $.ajax({
+                type: 'post',
+                url: '/upload',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(res) {
+                    // console.log(res);
+                    // 将图片地址替换
+                    $('#prev').attr('src', res[0].avatar)
+                        // 在 隐藏域 保存图片地址
+                    $('#img').val(res[0].avatar);
+                }
+            });
+        })
     </script>
     <script>
         NProgress.done()
