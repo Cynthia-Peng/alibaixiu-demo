@@ -133,20 +133,7 @@
 
     <script src="../assets/vendors/jquery/jquery.js"></script>
     <script src="../assets/vendors/bootstrap/js/bootstrap.js"></script>
-    <script>
-        $('#logout').on('click', function() {
-            // alert(confirm('你确定要退出么'));
-            if (confirm('你确定要退出么')) {
-                $.ajax({
-                    type: 'post',
-                    url: '/logout',
-                    success: function() {
-                        location.href = 'login.html';
-                    }
-                })
-            }
-        })
-    </script>
+    <script src="../assets/js/common.js"></script>
     <script>
         NProgress.done()
     </script>
