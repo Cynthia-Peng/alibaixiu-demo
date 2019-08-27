@@ -268,7 +268,7 @@
             });
         });
 
-        // 删除功能
+        // 单个删除功能
         $('tbody').on('click', '.delete', function() {
             if (confirm('你真的要删除么?')) {
                 var id = $(this).parent().attr('data-id');
@@ -281,14 +281,18 @@
                         // console.log(res);
                         var index = userArr.findIndex(item => item._id == res._id);
                         // console.log(index);
-                        userArr.splice(index, 1)
-                            // console.log(userArr);
+                        userArr.splice(index, 1);
+                        // console.log(userArr);
                         render(userArr);
                     }
                 });
-
             }
         });
+
+
+        // 全选功能
+
+        // 批量删除功能
     </script>
     <script>
         NProgress.done()
