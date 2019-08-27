@@ -60,9 +60,8 @@
                     <div class="form-group">
                         <label for="category">所属分类</label>
                         <select id="category" class="form-control" name="category">
-              <option value="">未分类</option>
-             
-            </select>
+                            <option value="">未分类</option>  
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="created">发布时间</label>
@@ -124,25 +123,7 @@
     <script src="../assets/vendors/bootstrap/js/bootstrap.js"></script>
     <script src="../assets/js/common.js"></script>
     <script src="../assets/vendors/art-template/template-web.js"></script>
-    <script type="text/html" id="cTpl">
-        {{each list}}
-        <option value="{{$value._id}}">{{$value.title}}</option>
-        {{/each}}
-    </script>
-    <script>
-        var cArr = [];
-        // 显示文章分类属性
-        $.ajax({
-            type: 'get',
-            url: '/categories',
-            success: function(res) {
-                var html = template('cTpl', {
-                    list: res
-                })
 
-            }
-        })
-    </script>
 
 
     <script>
