@@ -85,6 +85,7 @@
                         </div>
                         <div class="form-group">
                             <button class="btn btn-primary" type="button" id="addUser">添加</button>
+                            <button class="btn btn-primary" type="button" id="editUser" style="display: none">修改</button>
                         </div>
                     </form>
                 </div>
@@ -268,6 +269,90 @@
             });
         });
 
+
+        var id;
+        // 用户修改功能
+        $('tbody').on('click', '.edit', function() {
+            // alert(11);
+            // 获取点击的 id
+            id = $(this).parent().attr('data-id');
+            $('form > h2').text('修改用户');
+            $('#addUser').hide();
+            $('#editUser').show();
+            // alert(id)
+            // 找到对应的数据
+            var trObj = $(this).parents('tr');
+            // console.log(trObj);
+            // console.log(trObj.children().eq(2).text());
+
+            $('#email').val(trObj.children().eq(2).text());
+            $('#nickName').val(trObj.children().eq(3).text());
+
+            var status = trObj.children().eq(4).text();
+            // console.log(status);
+            if (status == '激活') {
+                $('#jh').prop('checked', true);
+                $('#wjh').prop('checked', false);
+            } else {
+                $('#wjh').prop('checked', true);
+                $('#jh').prop('checked', false);
+            }
+
+            var role = trObj.children().eq(5).text();
+
+            if (role == '超级管理员') {
+                $('#admin').prop('checked', true)
+                $('#normal').prop('checked', false);
+            } else {
+                $('#normal').prop('checked', true);
+                $('#admin').prop('checked', false)
+            };
+            var img = trObj.children().eq(1).find('img').attr('src');
+            // console.log(img);
+            if (img) {
+                $('#prev').attr('src', img);
+                $('#img').val(img);
+            } else {
+                $('#prev').attr('src', '../assets/img/default.png');
+                $('#img').val('');
+            }
+
+
+        });
+
+        // 给修改按钮注册点击事件
+        $('#editUser').on('click', function() {
+            // alert(11)
+            // 获取修改后 表单的数据
+            var formData = $('form').serialize();
+            // console.log(formData);
+
+            $.ajax({
+                type: 'put',
+                url: '/users/' + id,
+                data: formData,
+                success: function(res) {
+                    // console.log(res);
+                    // 响应回来的id 查找 userArr 的数据 并替换掉
+                    // console.log(res._id);
+                    var index = userArr.findIndex(item => item._id == res._id);
+                    userArr[index] = res;
+                    // console.log(userArr);
+                    render(userArr);
+                    $('#email').val('');
+                    $('#nickName').val('');
+                    $('#password').val('');
+                    $('#normal').prop('checked', true);
+                    $('#admin').prop('checked', false);
+                    $('#jh').prop('checked', false);
+                    $('#wjh').prop('checked', true);
+                    $('#prev').attr('src', '../assets/img/default.png');
+
+                }
+            });
+        })
+
+
         // 单个删除功能
         $('tbody').on('click', '.delete', function() {
             if (confirm('你真的要删除么?')) {
@@ -350,9 +435,7 @@
                     })
                 }
             })
-
-
-        })
+        });
     </script>
     <script>
         NProgress.done()
