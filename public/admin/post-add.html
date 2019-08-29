@@ -71,9 +71,9 @@
                     </div>
                     <div class="form-group">
                         <label for="status">状态</label>
-                        <select id="status" class="form-control" name="status">
-                            <option value="drafted">草稿</option>
-                            <option value="published">已发布</option>
+                        <select id="status" class="form-control" name="state">
+                            <option value="0">草稿</option>
+                            <option value="1">已发布</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -132,8 +132,6 @@
         {{/each}}
     </script>
     <script>
-        var cArr = [];
-
         // 显示文章分类属性
         $.ajax({
             type: 'get',
@@ -180,9 +178,8 @@
                 url: '/posts',
                 data: formData,
                 success: function(res) {
-                    // console.log(res);
+                    console.log(res);
                     location.href = 'posts.html';
-
                 }
             });
         })

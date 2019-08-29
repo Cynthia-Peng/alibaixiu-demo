@@ -40,14 +40,14 @@
                 <!-- show when multiple checked -->
                 <a class="btn btn-danger btn-sm" href="javascript:;" style="display: none">批量删除</a>
                 <form class="form-inline">
-                    <select name="" class="form-control input-sm">
-                        <option value="">所有分类</option>
-                        <option value="">草稿</option>
+                    <select name="category" class="form-control input-sm" id="category">
+                        <option value="all">所有分类</option>
+                       
                     </select>
-                    <select name="" class="form-control input-sm">
-                        <option value="">所有状态</option>
-                        <option value="">草稿</option>
-                        <option value="">已发布</option>
+                    <select name="status" class="form-control input-sm" id="status">
+                        <option value="all">所有状态</option>
+                        <option value="0">草稿</option>
+                        <option value="1">已发布</option>
                     </select>
                     <button class="btn btn-default btn-sm">筛选</button>
                 </form>
@@ -71,7 +71,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <!-- <tr>
                         <td>随便一个名称</td>
                         <td>小小</td>
                         <td>潮科技</td>
@@ -81,29 +81,7 @@
                             <a href="javascript:;" class="btn btn-default btn-xs">编辑</a>
                             <a href="javascript:;" class="btn btn-danger btn-xs">删除</a>
                         </td>
-                    </tr>
-                    <tr>
-                        <td>随便一个名称</td>
-                        <td>小小</td>
-                        <td>潮科技</td>
-                        <td class="text-center">2016/10/07</td>
-                        <td class="text-center">已发布</td>
-                        <td class="text-center">
-                            <a href="javascript:;" class="btn btn-default btn-xs">编辑</a>
-                            <a href="javascript:;" class="btn btn-danger btn-xs">删除</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>随便一个名称</td>
-                        <td>小小</td>
-                        <td>潮科技</td>
-                        <td class="text-center">2016/10/07</td>
-                        <td class="text-center">已发布</td>
-                        <td class="text-center">
-                            <a href="javascript:;" class="btn btn-default btn-xs">编辑</a>
-                            <a href="javascript:;" class="btn btn-danger btn-xs">删除</a>
-                        </td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
         </div>
@@ -151,24 +129,61 @@
     <script src="../assets/js/common.js"></script>
     <script src="../assets/vendors/art-template/template-web.js"></script>
 
+    <!-- 文章类目模板 -->
     <script type="text/html" id="cTpl">
         {{each list}}
         <option value="{{$value._id}}">{{$value.title}}</option>
         {{/each}}
     </script>
+
+    <!-- 文章列表模板 -->
+    <script type="text/html" id="pTpl">
+        {{each records}}
+        <tr>
+            <td>{{$value.title}}</td>
+            <td>{{$value.author.nickName}}</td>
+            <td>{{$value.category.title}}</td>
+            <td class="text-center">{{$value.createAt.substr(0,10)}}</td>
+            <td class="text-center">{{$value.state == 0 ? '草稿' : '已发布'}}</td>
+            <td class="text-center" data-id="{{$value.author}}">
+                <a href="javascript:;" class="btn btn-default btn-xs edit">编辑</a>
+                <a href="javascript:;" class="btn btn-danger btn-xs delete">删除</a>
+            </td>
+        </tr>
+        {{/each}}
+    </script>
     <script>
-        var cArr = [];
+        // 显示文章分类属性
         // 显示文章分类属性
         $.ajax({
             type: 'get',
             url: '/categories',
             success: function(res) {
+
+                // console.log(res);
+
                 var html = template('cTpl', {
                     list: res
-                })
-
+                });
+                $('#category').append(html);
             }
-        })
+        });
+
+        function render(category = 'all', status = 'all', page = 1) {
+
+            $.ajax({
+                type: 'get',
+                url: '/posts',
+                success: function(res) {
+                    console.log(res);
+                    var html = template('pTpl', res);
+                    // console.log(html);
+                    $('tbody').html(html);
+                }
+            })
+        };
+        // 获取文章列表
+        render();
     </script>
     <script>
         NProgress.done()
